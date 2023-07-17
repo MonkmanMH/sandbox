@@ -1,0 +1,232 @@
+---
+title: "duplication estimate"
+author: "Martin"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+```
+
+If you have 23 people in the room, there is a 50/50 chance that 2 of them share a birthday.
+
+Simulation:
+
+* repeat a random selection of two items from a list (with replacement)
+
+* calculate the proportion that are duplicated
+
+## Toy version
+
+Test with 6 sided dice
+
+```{r}
+# define the possible outcomes
+die <- 1:6
+
+# a random pair of numbers from the `die` object
+dice <- sample(die, size = 2, replace = TRUE)
+
+# returns row number of first duplicate
+anyDuplicated(dice)
+
+```
+
+```{r}
+# function
+roll <- function() {
+  die <- 1:6
+  dice <- sample(die, size = 2, replace = TRUE)
+  anyDuplicated(dice)
+
+}
+
+```
+
+```{r}
+# replicate 100 times
+#set.seed(1729)
+reps <- 100
+
+rep_dupe_die <- 
+  tibble(x = replicate(reps, roll()))
+
+rep_dupe_die %>%
+  filter(x > 0)
+
+# calculate the proportion that are duplicated
+rep_dupe_die %>% 
+  filter(x > 0) %>% 
+  nrow() / reps
+
+```
+
+
+## Birthdays
+
+```{r}
+# what proportion of a year is a single day?
+1/365
+
+# define the possible outcomes
+days_in_year <- 1:365
+
+# a random pair of numbers from the `days_in_year` object
+birthday_table <- sample(days_in_year, size = 2, replace = TRUE)
+
+# returns row number of first duplicate
+anyDuplicated(birthday_table)
+
+```
+
+```{r}
+# function
+birthday_match <- function(num_dates = 2) {
+  days_in_year <- 1:365
+  
+  # a random pair of numbers from the `days_in_year` object
+  birthday_table <- sample(days_in_year, size = num_dates, replace = TRUE)
+  
+  # returns row number of first duplicate
+  anyDuplicated(birthday_table)
+}
+
+```
+
+```{r}
+# replicate 100 times
+#set.seed(1729)
+reps <- 100000
+number_of_people <- 23
+
+rep_birthday <- 
+  tibble(x = replicate(reps, birthday_match(number_of_people)))
+
+rep_birthday %>%
+  filter(x > 0)
+
+# calculate the proportion that are duplicated
+rep_birthday %>% 
+  filter(x > 0) %>% 
+  nrow() / reps
+
+
+```
+
+
+### With factorials
+
+```{r factorial_365, eval=FALSE}
+
+factorial(365)
+
+```
+
+Vnr = n! / (n - k)!
+Vt = n^k = 365^23
+
+n! / (n - k)! = factorial of seq(n to k+1)
+
+
+
+```{r}
+
+n = 10
+k = 5
+
+n_seq <- 1:n
+k_seq <- 1:(n-k)
+
+# concatenate into single vector
+nk_seq <- c(n_seq, k_seq)
+
+```
+
+Reduce
+
+* eliminate values that are common in both n_seq and k_seq
+
+* https://stackoverflow.com/questions/37381174/r-removing-duplicate-elements-in-a-vector
+
+* combine into single vector, remove all values that have a duplicate
+
+```{r fun_keep_singles}
+keep_singles <- function(v){
+v[!(v %in% v[duplicated(v)])]
+}
+
+
+keep_singles(nk_seq)
+
+
+```
+
+Now with 365 and 23
+
+```{r}
+
+n = 365
+k = 23
+
+n_seq <- 1:n
+k_seq <- 1:(n-k)
+
+# concatenate into single vector
+nk_seq <- c(n_seq, k_seq)
+
+
+nk <- keep_singles(nk_seq)
+nk
+
+
+```
+
+multiply the remaining values
+
+```{r}
+Vnr <- prod(nk)
+Vnr
+```
+
+```{r}
+Vt <- n^k
+Vt
+
+```
+
+```{r}
+1 - (Vnr / Vt)
+```
+
+
+
+## Fibonaci sequence
+
+Is this a Fibonaci? 
+
+* Value starts at zero, adds the value of the current row (eg 1st value is zero, then 2nd is 0 + 1 = 1, then 1 + 2 = 3, 3 + 3 = 6, etc)
+
+```{r}
+365/2
+
+# number of cases
+num_instance <- 23
+
+output <- vector(mode = "integer", length = num_instance)  # 1. output
+
+# the loop
+j <- 0
+# - "i" is the counter that 
+for (i in 1:num_instance) {            # 2. sequence
+  output[[i]] <- j   
+  j <- (i + j)
+}
+
+# print the output object
+output
+
+```
+

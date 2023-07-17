@@ -1,0 +1,96 @@
+# estimating pi with increasing sample size
+# modified from code posted to mastodon 
+#    by @neilstats@fediscience.org 2023-03-14
+
+x <- runif(10000)
+y <- runif(10000)
+n <- 1:10000
+
+plot(n, sapply(n, (\(i) mean(x[1:i]^2 + y[1:i]^2 < 1) * 4)), type = "l")
+
+
+# with z as number of iterations
+z <- 10
+
+tibble(n = 1:z, x = runif(z), y = runif(z))
+
+
+
+plot(n, sapply(n, (\(i) mean(x[1:i]^2 + y[1:i]^2 < 1) * 4)), type = "l")
+
+#https://towardsdatascience.com/estimating-pi-using-monte-carlo-simulation-in-r-91d1f32406af
+
+estimate_pi <- function(seed = 28, iterations = 10000){
+  # set seed for reproducibility
+  set.seed(seed)
+  
+  # generate the (x, y) points
+  x <- runif(n = iterations, min = 0, max = 1)
+  y <- runif(n = iterations, min = 0, max = 1)
+  
+  # calculate 
+  sum_sq_xy <- sqrt(x^2 + y^2) 
+  
+  # see how many points are within circle
+  index_within_circle <- which(sum_sq_xy <= 1)
+  points_within_circle = length(index_within_circle)
+  
+  # estimate pi
+  pi_est <- 4 * points_within_circle / iterations
+  return(pi_est)
+}
+
+estimate_pi()
+
+
+# REFERENCES
+# monte carlo
+# https://blogs.sas.com/content/iml/2016/03/14/monte-carlo-estimates-of-pi.html#:~:text=To%20compute%20Monte%20Carlo%20estimates,the%20curve%20is%20%CF%80%20%2F%204.
+# https://www.geeksforgeeks.org/estimating-value-pi-using-monte-carlo/
+
+# geometry
+# https://www.cantorsparadise.com/computing-digits-of-pi-with-polygons-ae1480d464b5
+# https://www.geogebra.org/m/BhxyBJUZ#:~:text=Archimedes%20used%20a%2096%2Dsided,approximation%20achieved%20by%20this%20method.
+
+
+
+pi_table <- tibble(
+  x = seq(-1, 1, 0.1),
+  y = seq(-1, 1, 0.1)
+  )
+
+pi_table <- pi_table %>% 
+  mutate(sum_sq_xy = sqrt(x^2 + y^2)) %>% 
+  mutate(inside_circle = case_when(
+    sum_sq_xy <= 1 ~ TRUE,
+    TRUE ~ FALSE
+  ))
+
+ggplot(pi_table, aes(x, y, colour = inside_circle)) +
+  geom_point() +
+  coord_fixed()
+
+# plot a circle
+ggplot() +
+  ggforce::geom_circle(aes(x0 = 0, y0 = 0, r = 1)) +
+  coord_fixed()
+
+###---
+
+pi_table <- tibble(
+  x = runif(n = 4000, min = -1, max = 1),
+  y = runif(n = 4000, min = -1, max = 1)
+)
+
+pi_table <- pi_table %>% 
+  mutate(sum_sq_xy = sqrt(x^2 + y^2)) %>% 
+  mutate(inside_circle = case_when(
+    sum_sq_xy <= 1 ~ TRUE,
+    TRUE ~ FALSE
+  ))
+
+ggplot() +
+  coord_fixed() +
+  ggforce::geom_circle(aes(x0 = 0, y0 = 0, r = 1)) +
+  geom_point(data = pi_table, aes(x, y, colour = inside_circle)) 
+
