@@ -1,0 +1,84 @@
+---
+title: "Cumulative normal distribution"
+format: html
+editor: visual
+---
+
+```{r}
+library(tidyverse)
+```
+
+
+## Calculate and plot
+
+```{r}
+# create data
+mean_stat <- 1275
+sd_stat <- 35
+
+df_distro <- tibble(
+  xval = rnorm(10000, mean=mean_stat, sd=sd_stat),
+  z_stat = (xval - mean_stat) / sd_stat,
+  pval = pnorm(z_stat, 0, 1),
+  loc = 1 - pval
+  ) |> 
+  arrange(xval)
+
+df_distro
+
+# what is the value at LOC 65?
+df_distro |> 
+  filter(loc > 0.649 & loc < 0.651) |> 
+  summarise(mean_loc65 = mean(xval))
+
+write_csv(df_distro, "df_distro.csv")
+
+```
+
+```{r}
+
+p_distro <- ggplot(df_distro, aes(x = xval, y = loc)) +
+  geom_point() +
+  scale_y_reverse()
+  
+p_distro
+
+```
+
+
+
+```{r}
+# create data
+mean_stat <- 2485
+sd_stat <- 190
+
+df_distro2 <- tibble(
+  xval = rnorm(10000, mean=mean_stat, sd=sd_stat),
+  z_stat = (xval - mean_stat) / sd_stat,
+  pval = pnorm(z_stat, 0, 1),
+  loc = 1 - pval
+  ) |> 
+  arrange(xval)
+
+# what is the value at LOC 65?
+df_distro2 |> 
+  filter(loc > 0.649 & loc < 0.651) |> 
+  summarise(mean_loc65 = mean(xval))
+
+
+write_csv(df_distro2, "df_distro2.csv")
+
+
+```
+
+```{r}
+
+p_distro2 <- p_distro +
+  geom_point(data = df_distro2, aes(x = xval, y = loc))
+
+p_distro2
+
+```
+
+
+
