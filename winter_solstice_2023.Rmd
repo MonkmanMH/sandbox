@@ -1,0 +1,143 @@
+---
+title: "time difference"
+author: "Martin Monkman"
+date: "2023-10-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(lubridate)
+```
+
+
+Winter solstice 2023 falls on December 21 in western Canada at 7:27 pm (Pacific Standard Time). This can also be written as "2023-12-22 03:27 UTC", using the Universal Time Coordinated standard. All times around the world are expressed relative to this standard.
+
+* Time zones to the east are ahead, e.g. Japan is UTC +9 hours and New Zealand is in the last time zone before the International Date Line at UTC +12
+
+* Time zones to the west are behind, e.g. Hawaii is UTC -10 and Pacific Standard Time is UTC -8
+
+For this first section, we will use functions from the {lubridate} package.
+
+```{r}
+# lubridate functions
+winter_solstice_utc <- lubridate::ymd_hm("2023-12-22 03:27", tz = "UTC")
+winter_solstice_pst <- ymd_hm("2023-12-21 19:27", tz = "Canada/Pacific")
+
+winter_solstice_utc - winter_solstice_pst 
+
+#OlsonNames(tzdir = NULL)
+```
+
+## How long until the winter solstice occurs?
+
+Now we have a precise time (to the nearest minute) of when the solstice will occur. How long is that from now?
+
+Using lubridate function `now()`:
+
+```{r}
+# `now()` returns your computer's current time
+now()
+
+# subtract the winter solstice time from whatever now is"
+winter_solstice_utc -  now()
+```
+
+
+```{r}
+# NOTE: putting "now" first leads to negative value
+# -- current date is a smaller value
+now() - winter_solstice_utc
+
+```
+
+We can extract the value from "difference" using square brackets"
+
+```{r}
+
+ws_countdown <- winter_solstice_utc -  now()
+
+ws_countdown_value <- ws_countdown[[1]]
+ws_countdown_value
+
+```
+
+## Convert to days, hours, minutes
+
+### days
+
+```{r}
+# `floor()` is a round-down to the nearest integer function (the opposite is `ceiling()`)
+ws_countdown_days <- floor(ws_countdown_value)
+ws_countdown_days
+
+```
+
+### hours and minutes
+
+For hours, we have to subtract the days and then multiply by 24
+
+
+```{r}
+# calculate the remainder (the part after the decimal) after the whole number of days are subtracted
+ws_countdown_value - ws_countdown_days
+
+# multiply the remainder by 24 to get the number of hours
+ws_hours_all <- (ws_countdown_value - ws_countdown_days) * 24
+ws_hours_all
+
+```
+
+```{r}
+ws_countdown_hours <- floor(ws_hours_all)
+```
+
+
+And now subtract the whole hours from the result and multiply by 60 to get the number of minutes
+
+```{r}
+# multiply that by 60 to get the number of minutes
+ws_minutes_all <- (ws_hours_all - ws_countdown_hours) * 60
+ws_minutes_all
+
+ws_countdown_minutes <- floor(ws_minutes_all)
+ws_countdown_minutes
+```
+
+And if we want even more precision, seconds
+
+
+```{r}
+# multiply that by 60 to get the number of hours
+ws_countdown_seconds <- (ws_minutes_all - ws_countdown_minutes) * 60
+ws_countdown_seconds
+
+ws_countdown_seconds <- round(ws_countdown_seconds, 0)
+ws_countdown_seconds
+```
+
+## put all the bits together into a single streamlined flow
+
+```{r}
+# calculate time difference, get value
+ws_countdown_value <- (winter_solstice_utc -  now())[[1]]
+# days
+ws_countdown_days <- floor(ws_countdown_value)
+# hours
+ws_hours_all <- (ws_countdown_value - ws_countdown_days) * 24
+ws_countdown_hours <- floor(ws_hours_all)
+# minutes
+# - note use `ceiling()` to round up partial minute
+ws_minutes_all <- (ws_hours_all - ws_countdown_hours) * 60
+ws_countdown_minutes <- ceiling(ws_minutes_all)
+
+
+ws_countdown_days
+ws_countdown_hours
+ws_countdown_minutes
+```
+
+The winter solstice 2023 will occur in `r ws_countdown_days` days, `r ws_countdown_hours` hours, and `r ws_countdown_minutes` minutes.
+
+
