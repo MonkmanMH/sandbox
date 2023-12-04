@@ -44,6 +44,12 @@ options(cancensus.api_key = secret_API_cancensus)
 https://search.r-project.org/CRAN/refmans/ggmap/html/make_bbox.html
 
 
+list of CMAs and CAs
+https://www12.statcan.gc.ca/census-recensement/2021/geo/maps-cartes/referencemaps-cartesdereference/sgc-cgt/map-eng.cfm?SGC=02_20
+
+https://www12.statcan.gc.ca/census-recensement/2021/ref/dict/tab/index-eng.cfm?ID=t1_1
+
+
 ## Nanaimo
 
 ```{r nanaimo_bounding_box, eval=FALSE}
@@ -71,7 +77,9 @@ https://search.r-project.org/CRAN/refmans/ggmap/html/make_bbox.html
 
 ## Victoria
 
-### get ggmap
+### basemap
+
+  'arg' should be one of “stamen_terrain”, “stamen_toner”, “stamen_toner_lite”, “stamen_watercolor”, “alidade_smooth”, “alidade_smooth_dark”, “outdoors”, “stamen_terrain_background”, “stamen_toner_background”, “stamen_terrain_labels”, “stamen_terrain_lines”, “stamen_toner_labels”, “stamen_toner_lines”
 
 ```{r victoria_bounding_box}
 
@@ -93,8 +101,7 @@ ggmap(victoria_basemap)
 
 ```
 
-
-
+### get census data
 
 
 ```{r vector_list}
@@ -117,7 +124,7 @@ Next we use the `get_census()` function to create a "sf" object, with the data a
 
 Note the the `get_census()` function will also allow you to query a table with just the data, as well as options for other spatial formats beyond "sf".
 
-```{r get_sf}
+```{r get_sf_Victoria}
 
 cma_num <- "59935"
 
@@ -139,6 +146,7 @@ The "victoria_cma_sf" dataframe contains 84 rows, one for each of the Census Tra
 
 We can use this dataframe to plot an unadorned map of the region, showing the boundaries of the various Census Tracts. This uses `geom_sf()` within a `ggplot()` function. How easy is that?
 
+### Victoria CTs
 
 
 ```{r}
@@ -151,6 +159,8 @@ map_ct
 
 ```
 
+
+### choropleth
 
 One way we often see population mapped is as a choropleth, with the areas shaded by the value of the variable we are plotting. The vector number "v_CA21_1" contains the total population of each of the CTs; it's used as the `aes()` within the `geom_sf()`.
 
@@ -165,6 +175,8 @@ map_ct +
 ```
 
 
+### dots
+
 
 To make our map, we need to take the total population of each CT, divide it by the number of people we want to represent with a dot, and then randomly assign a location of dots within that CT such that the total population is represented. 
 
@@ -172,7 +184,9 @@ Fortunately for us, Kyle Walker has included an `as_dot_density()` function in t
 
 I have taken the liberty of creating a simplified version of `as_dot_density()` in the code below that will work for the Canadian context. You'll notice that the function relies on the [{terra} package](https://rspatial.github.io/terra/reference/terra-package.html) and the [`{sf} package`](https://r-spatial.github.io/sf/).
 
-```{r}
+
+
+```{r as_dot_density}
 
 as_dot_density <- function(
     input_data,
@@ -261,6 +275,8 @@ map_ct_dots +
 ```
 
 
+### choropleth on basemap
+
 
 ```{r}
 ggmap(victoria_basemap) +
@@ -272,13 +288,15 @@ ggmap(victoria_basemap) +
 ```
 
 
+### dots on basemap
+
 ```{r}
 ggmap(victoria_basemap) +
   geom_sf(
     data = victoria_cma_sf,
     inherit.aes = FALSE,
     mapping = aes(),
-    alpha = 0.3
+    alpha = 0.4
     ) +
   geom_sf(
     data = victoria_dots,
@@ -286,10 +304,150 @@ ggmap(victoria_basemap) +
     mapping = aes(),
     colour = "black",
     size = 0.01
-    ) 
+    ) +
+  theme(
+    axis.title = element_blank()
+  )
+
+```
+
+### where is the growth happening?
+
+
+
+## Courtenay CA
+
+https://www.openstreetmap.org/#map=11/49.6838/-124.8754
+
+
+CA number = "943"
+
+https://www12.statcan.gc.ca/census-recensement/2021/as-sa/fogs-spg/page.cfm?dguid=2021S0504943&lang=E&topic=1
+
+|Census subdivision (CSD) name|	Type|	Population 2021|	2016|	% change|code num| ca |
+|-----------------------------|-----|----------------|------|---------|--------|----|
+|Courtenay	|CY	|28,420	|25,639 r	|10.8|5926010| 59943 |
+|Comox |T	|14,806	|14,028	|5.5|5926005| 59943 |
+|Comox Valley A	|RDA	|7,926	|7,213	|9.9|5926021| 59943 |
+|Comox Valley B (Lazo North)	|RDA	|7,392	|7,095	|4.2|5926022| 59943 |
+|Cumberland	|VL	|4,447	|3,753	|18.5|5926014| 59943 |
+|Comox 1	|IRI	|291	|222	|31.1|5926801| 59943 |
+|Comox Valley C (Puntledge - Black Creek)| RDA | x | x | x | 5926024 | not in Courtenay CA |
+
+
+
+  'arg' should be one of “stamen_terrain”, “stamen_toner”, “stamen_toner_lite”, “stamen_watercolor”, “alidade_smooth”, “alidade_smooth_dark”, “outdoors”, “stamen_terrain_background”, “stamen_toner_background”, “stamen_terrain_labels”, “stamen_terrain_lines”, “stamen_toner_labels”, “stamen_toner_lines”
+  
+```{r courtenay_bounding_box}
+
+# narrow
+lon <- c(-125.06,-124.85)
+lat <- c(49.42, 49.74)
+
+# broad
+lon <- c(-125.2,-124.6)
+lat <- c(49.4, 49.8)
+
+
+courtenay_bb <- make_bbox(lon, lat)
+
+courtenay_basemap <- get_stadiamap(
+  bbox = courtenay_bb,
+  zoom = 10,
+#  maptype = 'stamen_terrain_background',
+#  maptype = 'alidade_smooth',
+  maptype = 'stamen_terrain',
+  source = 'stadia'
+)
+
+ggmap(courtenay_basemap)
 
 ```
 
 
+### get census data
+
+
+```{r get_csd_sf_Courtenay}
+
+census_regions_21 <- list_census_regions("CA21")
+
+cma_num <- "59943"
+
+# Return an sf-class data frame
+courtenay_ca_sf <- get_census(
+  dataset='CA21', 
+  regions=list(CMA=cma_num),
+  vectors=c(vector_list), 
+  level='CSD', 
+  quiet = TRUE,
+  geo_format = 'sf',
+  labels = 'short'
+  )
+
+```
+
+
+### Courtenay CTs
+
+
+```{r}
+
+
+map_courtenay_csd <- ggplot(courtenay_ca_sf) +
+  geom_sf()
+
+map_courtenay_csd
+
+```
+
+
+
+```{r}
+
+people_per_dot <- 50
+
+
+courtenay_ca_dots <- as_dot_density(
+  input_data = courtenay_ca_sf,
+  value = "Population",
+  values_per_dot = people_per_dot
+)
+
+map_courtenay_csd_dots <- map_courtenay_csd +
+  geom_sf(
+    mapping = aes(),
+    data = courtenay_ca_dots,
+    size = 0.01
+    ) 
+
+map_courtenay_csd_dots
+
+```
+
+
+### dots on basemap
+
+
+```{r}
+ggmap(courtenay_basemap) +
+  geom_sf(
+    data = courtenay_ca_sf,
+    inherit.aes = FALSE,
+    mapping = aes(),
+    alpha = 0.4
+    ) +
+  geom_sf(
+    data = courtenay_ca_dots,
+    inherit.aes = FALSE,
+    mapping = aes(),
+    colour = "black",
+    size = 0.01
+    ) +
+  theme(
+    axis.title = element_blank()
+  )
+
+```
 
 ## -30-
