@@ -1,0 +1,48 @@
+---
+title: "tides"
+format: html
+editor: visual
+---
+
+## General
+
+https://www.vims.edu/research/units/labgroups/tc_tutorial/tide_analysis.php
+
+
+https://tidesandcurrents.noaa.gov/publications/SpecialPubNo98.pdf
+
+https://www.tides.gc.ca/en/definitions-content-tides-and-currents
+
+https://tidesandcurrents.noaa.gov/publications/Tidal_Analysis_and_Predictions.pdf
+
+
+https://waves-vagues.dfo-mpo.gc.ca/library-bibliotheque/40935620.pdf
+
+
+
+### Victoria
+
+https://tides.gc.ca/en/stations/07120
+
+https://scispace.com/pdf/a-technique-for-quality-control-and-selection-of-tidal-1xgja52rr3.pdf
+
+https://cdnsciencepub.com/doi/abs/10.1139/f76-281?journalCode=jfrbc
+
+
+
+## Packages
+
+[Predicting tides in R](https://www.r-bloggers.com/2017/04/predicting-tides-in-r/)
+
+
+
+https://cran.r-project.org/web/packages/TideTables/TideTables.pdf
+
+https://www.rdocumentation.org/packages/TideHarmonics/versions/0.1-1/topics/predict.tide
+
+* https://cran.uni-muenster.de/web/packages/TideHarmonics/vignettes/austides.pdf
+
+https://cran.r-project.org/web/packages/rtide/rtide.pdf
+
+
+
