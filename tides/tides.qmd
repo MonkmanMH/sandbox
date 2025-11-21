@@ -18,6 +18,11 @@ https://tidesandcurrents.noaa.gov/publications/Tidal_Analysis_and_Predictions.pd
 
 https://waves-vagues.dfo-mpo.gc.ca/library-bibliotheque/40935620.pdf
 
+### Fourier decomposition
+
+https://www.math.stonybrook.edu/~tony/tides/analysis.html
+https://ajer.org/papers/v5(12)/J051208794.pdf
+
 
 
 ### Victoria
@@ -28,11 +33,13 @@ https://scispace.com/pdf/a-technique-for-quality-control-and-selection-of-tidal-
 
 https://cdnsciencepub.com/doi/abs/10.1139/f76-281?journalCode=jfrbc
 
-
-
-## Packages
+## R stuff
 
 [Predicting tides in R](https://www.r-bloggers.com/2017/04/predicting-tides-in-r/)
+
+
+
+### Packages
 
 
 
