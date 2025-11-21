@@ -1,0 +1,91 @@
+---
+title: "tides data: Victoria BC"
+format: html
+---
+
+```{r setup}
+
+library(tidyverse)
+
+```
+
+Data source: https://tides.gc.ca/en/stations/07120
+
+file 
+* observations_07120_Victoria Harbour_2025-11-15.csv
+* 2025-11-14 06:13 PST to 2025-11-21 06:12 PST
+
+## Read data
+
+```{r read_raw}
+
+#tides_yyj <- read_csv("data/observations_07120_Victoria Harbour_2025-11-15.csv")
+#
+#head(tides_yyj, n=10)
+#tail(tides_yyj, n=10)
+
+```
+
+read, clean, and save data
+
+```{r read_clean_save}
+
+#tides_yyj <- read_csv("data/observations_07120_Victoria Harbour_2025-11-15.csv",
+#                      n_max = 10080) |> 
+#  janitor::clean_names() |> 
+#  mutate(date_time = ymd_hm(date))  |> 
+#  select(date_time, "water_level_m" = observations_m)
+#
+#head(tides_yyj, n=10)
+#
+## expand date_time field to separate date and hour columns
+#tides_yyj <- tides_yyj |> 
+#  mutate(date = date(date_time)) |> 
+#  mutate(hour = hour(date_time)) |> 
+#  relocate(water_level_m, .after = last_col())
+
+#write_rds(tides_yyj, "data/07120_7day_data.rds")
+#
+
+```
+
+```{r read_rds}
+
+tides_yyj <- read_rds("data/07120_7day_data.rds")
+
+head(tides_yyj)
+
+```
+
+```{r plot_initial}
+
+tides_yyj |> 
+  ggplot(aes(x = date_time, y = water_level_m)) +
+    geom_line()
+
+```
+
+
+### hourly average
+
+
+
+
+```{r}
+tides_yyj_hr <- tides_yyj |> 
+  group_by(date, hour) |>
+  summarise(water_level_m = mean(water_level_m)) |> 
+  mutate(date_time = ymd_h(paste(date, hour)))
+
+tides_yyj_hr
+```
+
+
+```{r}
+tides_yyj_hr |> 
+  ggplot(aes(x = date_time, y = water_level_m)) +
+    geom_line()
+             
+
+```
+
