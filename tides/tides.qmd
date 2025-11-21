@@ -8,22 +8,17 @@ editor: visual
 
 https://www.vims.edu/research/units/labgroups/tc_tutorial/tide_analysis.php
 
-
 https://tidesandcurrents.noaa.gov/publications/SpecialPubNo98.pdf
 
 https://www.tides.gc.ca/en/definitions-content-tides-and-currents
 
 https://tidesandcurrents.noaa.gov/publications/Tidal_Analysis_and_Predictions.pdf
 
-
 https://waves-vagues.dfo-mpo.gc.ca/library-bibliotheque/40935620.pdf
 
 ### Fourier decomposition
 
-https://www.math.stonybrook.edu/~tony/tides/analysis.html
-https://ajer.org/papers/v5(12)/J051208794.pdf
-
-
+https://www.math.stonybrook.edu/\~tony/tides/analysis.html https://ajer.org/papers/v5(12)/J051208794.pdf
 
 ### Victoria
 
@@ -37,19 +32,12 @@ https://cdnsciencepub.com/doi/abs/10.1139/f76-281?journalCode=jfrbc
 
 [Predicting tides in R](https://www.r-bloggers.com/2017/04/predicting-tides-in-r/)
 
-
-
 ### Packages
-
-
 
 https://cran.r-project.org/web/packages/TideTables/TideTables.pdf
 
 https://www.rdocumentation.org/packages/TideHarmonics/versions/0.1-1/topics/predict.tide
 
-* https://cran.uni-muenster.de/web/packages/TideHarmonics/vignettes/austides.pdf
+-   https://cran.uni-muenster.de/web/packages/TideHarmonics/vignettes/austides.pdf
 
 https://cran.r-project.org/web/packages/rtide/rtide.pdf
-
-
-

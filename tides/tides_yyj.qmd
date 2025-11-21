@@ -1,0 +1,52 @@
+---
+title: "tides data: Victoria BC"
+format: html
+---
+
+```{r setup}
+
+library(tidyverse)
+
+```
+
+
+## Read data
+
+```{r read_raw}
+
+#tides_yyj <- read_csv("data/-1856732970-1763690168-977475853/07120_data.csv")
+#
+#head(tides_yyj, n=10)
+
+```
+
+```{r read_clean_save}
+#tides_yyj <- read_csv("data/-1856732970-1763690168-977475853/07120_data.csv",
+#                      skip = 6) |> 
+#  janitor::clean_names() |> 
+#  mutate(date_time = ymd_hm(date_date)) |> 
+#  select(date_time, "water_level_m" = water_level_meters_niveau_deau_metres)
+#
+#head(tides_yyj, n=10)
+#
+#write_rds(tides_yyj, "data/-1856732970-1763690168-977475853/07120_data.rds")
+#
+```
+
+```{r read_rds}
+
+tides_yyj <- read_rds("data/-1856732970-1763690168-977475853/07120_data.rds")
+
+head(tides_yyj)
+
+```
+
+```{r}
+
+tides_yyj |> 
+  filter(date_time < ymd("2019-10-01")) |> 
+  ggplot(aes(x = date_time, y = water_level_m)) +
+    geom_line()
+
+```
+
