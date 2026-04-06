@@ -1,0 +1,293 @@
+---
+title: "Untitled"
+author: "Martin Monkman"
+date: "2023-03-20"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(ggforce)   # extending ggplot options 
+
+```
+
+
+
+```{r}
+pi_table <- tibble(
+  x = seq(-1, 1, 0.1),
+  y = seq(-1, 1, 0.1)
+  )
+pi_table <- pi_table %>% 
+  mutate(sum_sq_xy = sqrt(x^2 + y^2)) %>% 
+  mutate(inside_circle = case_when(
+    sum_sq_xy <= 1 ~ TRUE,
+    TRUE ~ FALSE
+  ))
+# plot a circle using ggforce::geom_circle()  https://ggforce.data-imaginist.com/
+ggplot() +
+  ggforce::geom_circle(aes(x0 = 0, y0 = 0, r = 1)) +
+  coord_fixed()
+
+ggplot(pi_table, aes(x, y, colour = inside_circle)) +
+  geom_point() +
+  ggforce::geom_circle(aes(x0 = 0, y0 = 0, r = 1)) +
+  coord_fixed()
+```
+
+###---
+
+```{r}
+points_n <- 400
+set.seed(42)
+pi_table <- tibble(
+  x = runif(n = points_n, min = -1, max = 1),
+  y = runif(n = points_n, min = -1, max = 1)
+)
+
+pi_table <- pi_table %>% 
+  mutate(sum_sq_xy = sqrt(x^2 + y^2)) %>% 
+  mutate(inside_circle = case_when(
+    sum_sq_xy <= 1 ~ TRUE,
+    TRUE ~ FALSE
+  ))
+
+pi_table %>% 
+  group_by(inside_circle) %>% 
+  tally()
+
+point_ratio <- nrow(pi_table[pi_table$inside_circle == TRUE, ]) / points_n
+pi_estimate <- point_ratio * 4
+
+pi_chart <- ggplot() +
+  coord_fixed() +
+  ggforce::geom_circle(aes(x0 = 0, y0 = 0, r = 1)) +
+  geom_point(data = pi_table, aes(x, y, colour = inside_circle)) 
+
+pi_chart
+```
+
+```{r}
+pi_chart +
+  annotate("text", 
+           x = 0.65, y = 1,
+           label = glue::glue("estimate of pi: {pi_estimate}")
+           )
+```
+
+
+```{r}
+
+set.seed(42)
+(x <- runif(n = 3, min = -1, max = 1))
+
+# without a re-do of set.seed, y starts fresh
+(y <- runif(n = 5, min = -1, max = 1))
+
+
+
+set.seed(42)
+(x <- runif(n = 3, min = -1, max = 1))
+
+set.seed(42)
+(y <- runif(n = 5, min = -1, max = 1))
+
+
+```
+what's the behaviour inside a pipe?
+
+```{r}
+
+points_n <- 3
+set.seed(42)
+pi_table <- tibble(
+  x = runif(n = points_n, min = -1, max = 1),
+  y = runif(n = (points_n), min = -1, max = 1)
+)
+
+pi_table
+
+points_n <- 5
+set.seed(42)
+pi_table <- tibble(
+  x = runif(n = points_n, min = -1, max = 1),
+  y = runif(n = points_n, min = -1, max = 1)
+)
+
+pi_table
+
+```
+
+
+ooo, it wraps / is sequential -- what was the first case in y-3 is the 4th case in x-5
+
+-> need to run each column separately, then join
+
+```{r}
+
+points_n <- 10
+set.seed(42) # the answer to the “ultimate question of life, the universe, and everything”
+pi_table <- tibble(
+  x = runif(n = points_n, min = -1, max = 1))
+
+# reset the seed with a different value!
+set.seed(23) # the number of days Thorin & Co. rested in Rivendell
+pi_table <- pi_table %>% 
+  mutate(y = runif(n = points_n, min = -1, max = 1))
+
+pi_table
+
+```
+
+turn it into a function
+
+## pi functions
+
+### pi table
+
+```{r pi_table_function}
+
+pi_table <- function(points_n = 100){
+
+#set.seed(42) # the answer to the “ultimate question of life, the universe, and everything”
+set.seed(14) # the number of days Thorin & Co. rested in Rivendell
+pi_tab <- tibble(
+  x = runif(n = points_n, min = -1, max = 1))
+
+# reset the seed with a different value!
+#set.seed(14) # the number of days Thorin & Co. rested in Rivendell
+#set.seed(1701) # NCC-1701, the starship USS Enterprise
+set.seed(1729) # Ramanujan's taxicab number
+pi_tab <- pi_tab %>% 
+  mutate(y = runif(n = points_n, min = -1, max = 1))
+
+# calculate if point is inside the circle or not
+pi_tab <- pi_tab %>% 
+  mutate(sum_sq_xy = sqrt(x^2 + y^2)) %>% 
+  mutate(inside_circle = case_when(
+    sum_sq_xy <= 1 ~ TRUE,
+    TRUE ~ FALSE
+  ))
+
+return(pi_tab)
+  
+}
+
+```
+
+
+
+```{r pi_estimate_function}
+
+pi_estimate <- function(points_n = 100){
+  pi_table <- pi_table(points_n)
+  point_ratio <- nrow(pi_table[pi_table$inside_circle == TRUE, ]) / points_n
+  pi_estimate <- point_ratio * 4
+  return(pi_estimate)
+}
+
+pi_estimate(4000)
+```
+
+
+
+```{r}
+points_pi <- 4000
+
+pi_table_100 <- pi_table(points_pi)
+
+pi_table_100
+
+
+point_ratio <- nrow(pi_table_100[pi_table_100$inside_circle == TRUE, ]) / nrow(pi_table_100)
+pi_estimate <- point_ratio * 4
+pi_estimate
+```
+
+
+### pi chart
+
+```{r pi_chart_function}
+
+pi_chart <- function(pi_table_name){
+  
+pi_chart <- ggplot() +
+  coord_fixed() +
+  ggforce::geom_circle(aes(x0 = 0, y0 = 0, r = 1)) +
+  geom_point(data = pi_table_name, aes(x, y, colour = inside_circle)) 
+
+pi_chart +
+  annotate("text", 
+           x = 0.65, y = 1,
+           label = glue::glue("n={points_pi}\nestimate of pi: {pi_est}")
+           )
+
+}
+
+pi_chart(pi_table_100)
+
+```
+
+
+### pi loop 
+
+run pi table and estimate pi multiple times with increasing size of n
+
+```{r}
+
+#pi_estimate <- function(points_n = points_pi){
+#  pi_table <- pi_table(points_n)
+#  point_ratio <- nrow(pi_table[pi_table$inside_circle == TRUE, ]) / points_n
+#  pi_estimate <- point_ratio * 4
+#  return(pi_estimate)
+#}
+
+```
+
+
+```{r}
+
+pi_est_table <- tibble(
+  n_points = seq(1, 1000, 1),
+  pi_est_val = NA
+)
+
+# loop
+output <- vector(mode = "numeric", length = nrow(pi_est_table))
+
+for (i in seq_along(output)) {            # 2. sequence
+   output[i] <- pi_estimate(pi_est_table$n_points[i])      # 3. body
+   pi_est_table[[i, 2]] <- output[i]
+}
+
+ggplot(pi_est_table, aes(x = n_points, y = pi_est_val)) +
+  geom_line() +
+  geom_hline(yintercept = pi, colour = "red", size = 0.5) 
+  
+
+```
+
+A more efficient loop
+
+```{r}
+
+n_points = seq(1, 4000, 1)
+
+# loop
+pi_est_val <- vector(mode = "numeric", length = length(n_points))
+
+for (i in seq_along(pi_est_val)) {            # 2. sequence
+   pi_est_val[i] <- pi_estimate(n_points[i])      # 3. body
+#   pi_est_table[[i, 2]] <- output[i]
+}
+
+pi_est_val_table <- tibble(n_points, pi_est_val)
+
+ggplot(pi_est_val_table, aes(x = n_points, y = pi_est_val)) +
+  geom_line() +
+  geom_hline(yintercept = pi, colour = "red", size = 0.5) 
+  
+
+```
