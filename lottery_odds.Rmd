@@ -1,0 +1,64 @@
+---
+title: "lottery odds"
+author: "Martin Monkman"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 6-49
+
+```{r}
+
+ball_count <- 49
+ball_game <- 6
+
+ball_count_sequence <- seq(from = (ball_count - ball_game + 1), to = ball_count, by = 1)
+
+permutations <- prod(ball_count_sequence) / factorial(ball_game)
+permutations
+
+```
+
+
+## LottoMax
+
+### original
+
+```{r}
+
+ball_count <- 50
+ball_game <- 7
+
+ball_count_sequence <- seq(from = (ball_count - ball_game + 1), to = ball_count, by = 1)
+
+permutations <- prod(ball_count_sequence) / factorial(ball_game)
+permutations
+
+# 3 plays for $5
+permutations / 3
+
+```
+
+
+### original
+
+```{r}
+
+ball_count <- 52
+ball_game <- 7
+
+ball_count_sequence <- seq(from = (ball_count - ball_game + 1), to = ball_count, by = 1)
+
+permutations <- prod(ball_count_sequence) / factorial(ball_game)
+permutations
+
+# 4 plays for $6
+permutations / 4
+
+
+```
+
