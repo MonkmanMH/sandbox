@@ -9,19 +9,39 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+## lottery games 
+
+Major lotteries have games that have the jackpot based on matching the numbers drawn. For example, one national lottery in Canada is **6-49** ... there are 49 balls numbered from 1 to 49, and 6 are randomly selected. If the numbers selected match the numbers played by an individual, that individual wins the jackpot. (There are smaller prizes based on matching 5, 4, and 3 numbers but that is outside the scope of this example.)
+
+
 ## 6-49
 
 ```{r}
 
 ball_count <- 49
-ball_game <- 6
+ball_select <- 6
 
-ball_count_sequence <- seq(from = (ball_count - ball_game + 1), to = ball_count, by = 1)
+ball_count_sequence <- seq(from = (ball_count - ball_select + 1), to = ball_count, by = 1)
 
-permutations <- prod(ball_count_sequence) / factorial(ball_game)
+permutations <- prod(ball_count_sequence) / factorial(ball_select)
 permutations
 
 ```
+
+Create a function
+
+```{r}
+
+lotto_perms <- function(ball_count, ball_select) {
+  ball_count_sequence <- seq(from = (ball_count - ball_select + 1), to = ball_count, by = 1)
+  permutations <- prod(ball_count_sequence) / factorial(ball_select)
+  permutations
+}
+
+lotto_perms(49, 6)
+
+```
+
 
 
 ## LottoMax
@@ -31,16 +51,21 @@ permutations
 ```{r}
 
 ball_count <- 50
-ball_game <- 7
+ball_select <- 7
 
-ball_count_sequence <- seq(from = (ball_count - ball_game + 1), to = ball_count, by = 1)
+ball_count_sequence <- seq(from = (ball_count - ball_select + 1), to = ball_count, by = 1)
 
-permutations <- prod(ball_count_sequence) / factorial(ball_game)
+permutations <- prod(ball_count_sequence) / factorial(ball_select)
 permutations
 
 # 3 plays for $5
 permutations / 3
 
+```
+
+
+```{r}
+lotto_perms(50, 7)
 ```
 
 
@@ -51,14 +76,20 @@ permutations / 3
 ball_count <- 52
 ball_game <- 7
 
-ball_count_sequence <- seq(from = (ball_count - ball_game + 1), to = ball_count, by = 1)
+ball_count_sequence <- seq(from = (ball_count - ball_select + 1), to = ball_count, by = 1)
 
-permutations <- prod(ball_count_sequence) / factorial(ball_game)
+permutations <- prod(ball_count_sequence) / factorial(ball_select)
 permutations
 
 # 4 plays for $6
 permutations / 4
 
+
+```
+
+```{r}
+
+lotto_perms(52, 7)
 
 ```
 
