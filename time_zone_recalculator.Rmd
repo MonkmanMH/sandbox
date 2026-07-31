@@ -1,0 +1,67 @@
+---
+title: "time zone check"
+author: "Martin"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(here)
+
+
+## create a csv file with the full list of Olson Names
+#ON_list <- as_tibble(OlsonNames())
+#write_csv(ON_list, "Olson_Names.csv")
+
+```
+
+This code uses the {lubridate} function [`with_tz()`](https://lubridate.tidyverse.org/reference/with_tz.html) to convert a specific time to a different time zone.
+
+
+## What time is it now?
+
+
+```{r}
+
+# local time
+now()
+
+# Tokyo
+now(tz = "Asia/Tokyo")
+
+```
+
+
+```{r}
+# assign now() to an object
+
+current_time <- now()
+current_time
+
+
+# convert time
+with_tz(current_time, tzone = "Asia/Tokyo")
+
+```
+
+
+## Tokyo vs New York
+
+In this example, we first set a specific time object `time_to_convert`. This uses the {lubridate} function `ymd_hm()` to create a date-time object that is one minute past midnight in New York.
+
+Next, the code uses the `with_tz()` function to change the time to Tokyo.
+
+
+```{r}
+# one minute past midnight
+time_to_convert <- ymd_hm("2026-09-17 00:01", tz = "America/New_York")
+
+time_to_convert
+
+with_tz(time_to_convert, tzone = "Asia/Tokyo")
+
+```
+
