@@ -48,20 +48,25 @@ with_tz(current_time, tzone = "Asia/Tokyo")
 ```
 
 
-## Tokyo vs New York
+## New York vs Tokyo vs Victoria
 
 In this example, we first set a specific time object `time_to_convert`. This uses the {lubridate} function `ymd_hm()` to create a date-time object that is one minute past midnight in New York.
 
-Next, the code uses the `with_tz()` function to change the time to Tokyo.
+Next, the code uses the `with_tz()` function to change the time to Tokyo and Victoria, BC.
 
 
 ```{r}
 # one minute past midnight
 time_to_convert <- ymd_hm("2026-09-17 00:01", tz = "America/New_York")
 
+print("Orlando time")
 time_to_convert
 
+print("Tokyo time")
 with_tz(time_to_convert, tzone = "Asia/Tokyo")
+
+print("Victoria time")
+with_tz(time_to_convert, tzone = "Canada/Pacific")
 
 ```
 
